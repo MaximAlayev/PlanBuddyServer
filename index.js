@@ -58,13 +58,6 @@ app.post("/api/downvote-restaraunt", (req, res) => {
   res.send("Success")
 })
 
-app.use(express.static(path.join(__dirname, 'build')));
-
-// PATH CONFIGURATION TO RESPOND TO A REQUEST TO STATIC ROUTE REQUEST BY SERVING index.html
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
 app.listen(PORT, () => {
   console.log("running on port 5000")
 });
