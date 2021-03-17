@@ -3,7 +3,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
-const mysql = require("mysql");
 
 var restarauntDict = {};
 // Restaraunt lists contains lists of size 2 where the first index is the restaraunt
