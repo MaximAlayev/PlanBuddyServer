@@ -42,26 +42,29 @@ app.get("/api/get-restaraunt-list/:pollId/:userId", (req, res) => {
   if (restarauntDict[req.params.pollId] == undefined) {
     restarauntDict[req.params.pollId] = {}
   }
+  if (upvoteDict[req.params.pollId] == undefined) {
+    upvoteDict[req.params.pollId] = {}
+  }
   if (upvoteDict[req.params.pollId][req.params.userId] == undefined) {
     upvoteDict[req.params.pollId][req.params.userId]  = {}
   }
-  for (var name in restarauntDict[pollId]) {
+  for (var name in restarauntDict[req.params.pollId]) {
     if (upvoteDict[req.params.pollId][req.params.userId][name] == undefined) {
-      upvoteDict[req.params.pollId][req.params.userId][name] == False
+      upvoteDict[req.params.pollId][req.params.userId][name] == false
     }
   }
   res.send(orderedRestarauntList(req.params.pollId))
 })
 
 app.get("/api/get-upvote-dict/:pollId/:userId", (req, res) => {
-  res.send(restarauntDict[req.params.pollId][req.params.userId])
+  res.send(upvoteDict[req.params.pollId][req.params.userId])
 })
 
 app.post("/api/add-restaraunt", (req, res) => {
   pollId = req.body.pollId
   userId = req.body.userId
   restarauntName = req.body.restarauntName
-  upvoteDict[pollId][userId][restarauntName] = True
+  upvoteDict[pollId][userId][restarauntName] = true
   restarauntDict[pollId][restarauntName] = 1
   res.send("Success")
 })
@@ -70,7 +73,7 @@ app.post("/api/upvote-restaraunt", (req, res) => {
   pollId = req.body.pollId
   userId = req.body.userId
   restarauntName = req.body.restarauntName
-  upvoteDict[pollId][userId][restarauntName] = True
+  upvoteDict[pollId][userId][restarauntName] = true
   restarauntDict[pollId][restarauntName] = restarauntDict[pollId][restarauntName] + 1
   res.send("Success")
 })
@@ -79,11 +82,11 @@ app.post("/api/downvote-restaraunt", (req, res) => {
   pollId = req.body.pollId
   restarauntName = req.body.restarauntName
   userId = req.body.userId
-  upvoteDict[pollId][userId][restarauntName] = False
+  upvoteDict[pollId][userId][restarauntName] = false
   restarauntDict[pollId][restarauntName] = restarauntDict[pollId][restarauntName] - 1
   res.send("Success")
 })
 
 app.listen(PORT, () => {
-  console.log("running on port 5000")
+  console.log(`running on port ${PORT}`)
 });
