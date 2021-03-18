@@ -5,8 +5,16 @@ const app = express();
 const cors = require('cors');
 
 var restarauntDict = {};
-// Restaraunt lists contains lists of size 2 where the first index is the restaraunt
-// and the second index is the upvote count
+var upvoteDict = {};
+
+// Restaraunt Dict contains keys that are pollIds
+//    the values to those keys are dictionaries who's keys are restaraunt names
+//        the values to those keys are upvote counts
+
+// Upvote Dict contains keys that are pollIds
+//    the values to those keys are dictionaries who's keys are userIds
+//        the values to those keys are a dictionary who's keys are restaraunt names
+//          the values to those keys are booleans
 
 app.use(cors());
 app.options('*', cors());
@@ -30,23 +38,39 @@ function orderedRestarauntList(pollId) {
   return ordered_rl
 }
 
-app.get("/api/get-restaraunt-list/:pollId", (req, res) => {
+app.get("/api/get-restaraunt-list/:pollId/:userId", (req, res) => {
   if (restarauntDict[req.params.pollId] == undefined) {
     restarauntDict[req.params.pollId] = {}
+  }
+  if (upvoteDict[req.params.pollId][req.params.userId] == undefined) {
+    upvoteDict[req.params.pollId][req.params.userId]  = {}
+  }
+  for (var name in restarauntDict[pollId]) {
+    if (upvoteDict[req.params.pollId][req.params.userId][name] == undefined) {
+      upvoteDict[req.params.pollId][req.params.userId][name] == False
+    }
   }
   res.send(orderedRestarauntList(req.params.pollId))
 })
 
+app.get("/api/get-upvote-dict/:pollId/:userId", (req, res) => {
+  res.send(restarauntDict[req.params.pollId][req.params.userId])
+})
+
 app.post("/api/add-restaraunt", (req, res) => {
   pollId = req.body.pollId
+  userId = req.body.userId
   restarauntName = req.body.restarauntName
+  upvoteDict[pollId][userId][restarauntName] = True
   restarauntDict[pollId][restarauntName] = 1
   res.send("Success")
 })
 
 app.post("/api/upvote-restaraunt", (req, res) => {
   pollId = req.body.pollId
+  userId = req.body.userId
   restarauntName = req.body.restarauntName
+  upvoteDict[pollId][userId][restarauntName] = True
   restarauntDict[pollId][restarauntName] = restarauntDict[pollId][restarauntName] + 1
   res.send("Success")
 })
@@ -54,6 +78,8 @@ app.post("/api/upvote-restaraunt", (req, res) => {
 app.post("/api/downvote-restaraunt", (req, res) => {
   pollId = req.body.pollId
   restarauntName = req.body.restarauntName
+  userId = req.body.userId
+  upvoteDict[pollId][userId][restarauntName] = False
   restarauntDict[pollId][restarauntName] = restarauntDict[pollId][restarauntName] - 1
   res.send("Success")
 })
